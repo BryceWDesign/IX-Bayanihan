@@ -1,0 +1,574 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/ix-bayanihan/schemas/event_logs/event_log.schema.json",
+  "title": "IX-Bayanihan Event Log Record",
+  "description": "Schema for a single IX-Bayanihan event log record used by field nodes, gateways, and the Local Flood Operations Console.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_type",
+    "event_id",
+    "timestamp",
+    "node_id",
+    "node_class",
+    "event_type",
+    "severity",
+    "summary",
+    "source"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Version of the event log schema used to create this record.",
+      "examples": [
+        "1.0.0"
+      ]
+    },
+    "record_type": {
+      "type": "string",
+      "const": "event_log",
+      "description": "Fixed discriminator identifying this record as an event log record."
+    },
+    "event_id": {
+      "type": "string",
+      "description": "Stable unique identifier for the event record.",
+      "minLength": 8,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9._:-]+$",
+      "examples": [
+        "evt-20260413T120001Z-inlet-node-001-0001"
+      ]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Primary event timestamp."
+    },
+    "node_id": {
+      "type": "string",
+      "description": "Stable unique identifier for the node that produced or is associated with the event.",
+      "minLength": 3,
+      "maxLength": 64,
+      "pattern": "^[A-Za-z0-9._:-]+$"
+    },
+    "node_class": {
+      "type": "string",
+      "description": "High-level category of node associated with the event.",
+      "enum": [
+        "smart_inlet_node",
+        "smart_sump_node",
+        "underpass_node",
+        "sentinel_node",
+        "outfall_node",
+        "gateway_node",
+        "relay_node",
+        "beacon_node",
+        "other"
+      ]
+    },
+    "site_label": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Human-readable site label if available.",
+      "maxLength": 128
+    },
+    "event_type": {
+      "type": "string",
+      "description": "Normalized event category.",
+      "enum": [
+        "boot",
+        "heartbeat",
+        "state_transition",
+        "watch_entered",
+        "watch_cleared",
+        "alert_entered",
+        "alert_cleared",
+        "degraded_entered",
+        "degraded_cleared",
+        "fault_entered",
+        "fault_cleared",
+        "maintenance_needed_asserted",
+        "maintenance_needed_cleared",
+        "communications_lost",
+        "communications_restored",
+        "offline_logging_entered",
+        "offline_logging_exited",
+        "sensor_invalid_read",
+        "sensor_recovered",
+        "low_power_entered",
+        "low_power_cleared",
+        "brownout_recovered",
+        "power_restored",
+        "power_lost",
+        "backflow_suspected",
+        "backflow_cleared",
+        "blockage_suspected",
+        "blockage_cleared",
+        "persistent_ponding_suspected",
+        "service_mode_entered",
+        "service_mode_exited",
+        "manual_note",
+        "test_event",
+        "other"
+      ]
+    },
+    "severity": {
+      "type": "string",
+      "description": "Normalized severity level for event display and filtering.",
+      "enum": [
+        "info",
+        "watch",
+        "alert",
+        "service",
+        "fault",
+        "critical"
+      ]
+    },
+    "summary": {
+      "type": "string",
+      "description": "Short human-readable summary of the event.",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "details": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Optional longer event detail string.",
+      "maxLength": 2000
+    },
+    "source": {
+      "type": "string",
+      "description": "Origin of the event record.",
+      "enum": [
+        "node_firmware",
+        "gateway",
+        "ops_console",
+        "field_operator",
+        "simulation",
+        "test_harness",
+        "imported_log",
+        "other"
+      ]
+    },
+    "source_version": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Optional firmware, software, or tool version that produced the record.",
+      "maxLength": 64
+    },
+    "prior_state": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Previous node state for transition-type events.",
+      "enum": [
+        null,
+        "BOOT",
+        "NORMAL",
+        "WATCH",
+        "ALERT",
+        "DEGRADED",
+        "FAULT",
+        "MAINTENANCE",
+        "OFFLINE_LOGGING",
+        "SHUTDOWN_SAFE"
+      ]
+    },
+    "new_state": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "New node state for transition-type events.",
+      "enum": [
+        null,
+        "BOOT",
+        "NORMAL",
+        "WATCH",
+        "ALERT",
+        "DEGRADED",
+        "FAULT",
+        "MAINTENANCE",
+        "OFFLINE_LOGGING",
+        "SHUTDOWN_SAFE"
+      ]
+    },
+    "power_state": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Power condition associated with the event if available.",
+      "enum": [
+        null,
+        "unknown",
+        "external_power",
+        "battery_normal",
+        "battery_low",
+        "charging",
+        "power_unstable",
+        "brownout_recovered",
+        "critical_low_power"
+      ]
+    },
+    "communication_state": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Communications condition associated with the event if available.",
+      "enum": [
+        null,
+        "unknown",
+        "online",
+        "intermittent",
+        "stale",
+        "offline_logging",
+        "offline"
+      ]
+    },
+    "sensor_health": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Overall sensor trust status associated with the event if available.",
+      "enum": [
+        null,
+        "trusted",
+        "cautionary",
+        "degraded",
+        "suspect",
+        "unavailable"
+      ]
+    },
+    "health_confidence": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Overall trust level for the event context if available.",
+      "enum": [
+        null,
+        "trusted",
+        "cautionary",
+        "degraded",
+        "suspect",
+        "unavailable"
+      ]
+    },
+    "fault_code": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Optional normalized fault code associated with the event.",
+      "maxLength": 64
+    },
+    "maintenance_needed": {
+      "type": [
+        "boolean",
+        "null"
+      ],
+      "description": "Maintenance-needed status associated with the event if available."
+    },
+    "maintenance_reason": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Optional reason for maintenance-needed assertion.",
+      "maxLength": 256
+    },
+    "water_status": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Qualitative water condition associated with the event if available.",
+      "enum": [
+        null,
+        "unknown",
+        "dry",
+        "normal",
+        "rising",
+        "persistent",
+        "receding",
+        "high",
+        "blocked_suspected",
+        "backflow_suspected"
+      ]
+    },
+    "water_level": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Measured water level associated with the event if available."
+    },
+    "water_level_units": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Units for water_level.",
+      "enum": [
+        null,
+        "mm",
+        "cm",
+        "m",
+        "in",
+        "ft",
+        "raw"
+      ]
+    },
+    "water_trend": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Water trend associated with the event if available.",
+      "enum": [
+        null,
+        "unknown",
+        "stable",
+        "rising",
+        "falling",
+        "volatile"
+      ]
+    },
+    "watch_threshold_active": {
+      "type": [
+        "boolean",
+        "null"
+      ],
+      "description": "Whether the watch threshold was active when the event occurred."
+    },
+    "alert_threshold_active": {
+      "type": [
+        "boolean",
+        "null"
+      ],
+      "description": "Whether the alert threshold was active when the event occurred."
+    },
+    "secondary_threshold_active": {
+      "type": [
+        "boolean",
+        "null"
+      ],
+      "description": "Whether a secondary threshold was active when the event occurred."
+    },
+    "blockage_score": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Optional blockage suspicion score associated with the event.",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "debris_score": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Optional debris suspicion score associated with the event.",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "backflow_flag": {
+      "type": [
+        "boolean",
+        "null"
+      ],
+      "description": "Whether backflow was suspected or active when the event occurred."
+    },
+    "battery_voltage": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Battery voltage associated with the event if available."
+    },
+    "battery_percent_estimate": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Estimated remaining battery percentage associated with the event.",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "signal_quality": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Optional normalized signal quality estimate associated with the event.",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "offline_logging_active": {
+      "type": [
+        "boolean",
+        "null"
+      ],
+      "description": "Whether the node was believed to be logging locally without uplink."
+    },
+    "local_alert_active": {
+      "type": [
+        "boolean",
+        "null"
+      ],
+      "description": "Whether local visible or audible alerting was active."
+    },
+    "related_event_ids": {
+      "type": "array",
+      "description": "Optional list of related event identifiers.",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128,
+        "pattern": "^[A-Za-z0-9._:-]+$"
+      },
+      "maxItems": 20,
+      "uniqueItems": true
+    },
+    "attachment_refs": {
+      "type": "array",
+      "description": "Optional references to external attachments such as images, logs, or exported traces.",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 256
+      },
+      "maxItems": 20,
+      "uniqueItems": true
+    },
+    "acknowledged_flag": {
+      "type": "boolean",
+      "description": "Whether a human operator or tool has acknowledged this event."
+    },
+    "acknowledged_by": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Optional identifier for the acknowledging user or tool.",
+      "maxLength": 64
+    },
+    "acknowledged_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time",
+      "description": "Timestamp of acknowledgment if acknowledged."
+    },
+    "tags": {
+      "type": "array",
+      "description": "Optional short tags useful for filtering or grouping.",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32
+      },
+      "maxItems": 20,
+      "uniqueItems": true
+    },
+    "raw_observation_notes": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Optional free-text notes from a builder, field operator, or reviewing tool.",
+      "maxLength": 2000
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "const": "state_transition"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "prior_state",
+          "new_state"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "acknowledged_flag": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "acknowledged_at"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "enum": [
+              "fault_entered",
+              "sensor_invalid_read"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "severity": {
+            "enum": [
+              "fault",
+              "critical"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "event_type": {
+            "enum": [
+              "alert_entered",
+              "backflow_suspected",
+              "blockage_suspected",
+              "persistent_ponding_suspected"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "severity": {
+            "enum": [
+              "alert",
+              "critical"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}
