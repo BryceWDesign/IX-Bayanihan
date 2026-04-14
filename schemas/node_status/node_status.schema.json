@@ -1,0 +1,552 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/ix-bayanihan/schemas/node_status/node_status.schema.json",
+  "title": "IX-Bayanihan Node Status Record",
+  "description": "Schema for a single IX-Bayanihan node status record used by field nodes, gateways, and the Local Flood Operations Console.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_type",
+    "node_id",
+    "node_class",
+    "site_label",
+    "deployment_tier",
+    "generated_at",
+    "current_state",
+    "power_state",
+    "communication_state",
+    "maintenance_needed",
+    "fault_present",
+    "health_confidence",
+    "last_seen_at",
+    "firmware_version"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Version of the node status schema used to create this record.",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "examples": [
+        "1.0.0"
+      ]
+    },
+    "record_type": {
+      "type": "string",
+      "const": "node_status",
+      "description": "Fixed discriminator identifying this record as a node status record."
+    },
+    "node_id": {
+      "type": "string",
+      "description": "Stable unique identifier for the field node.",
+      "minLength": 3,
+      "maxLength": 64,
+      "pattern": "^[A-Za-z0-9._:-]+$",
+      "examples": [
+        "inlet-node-001",
+        "sentinel-outfall-003"
+      ]
+    },
+    "node_class": {
+      "type": "string",
+      "description": "High-level category of node.",
+      "enum": [
+        "smart_inlet_node",
+        "smart_sump_node",
+        "underpass_node",
+        "sentinel_node",
+        "outfall_node",
+        "gateway_node",
+        "relay_node",
+        "beacon_node",
+        "other"
+      ]
+    },
+    "site_label": {
+      "type": "string",
+      "description": "Human-readable site label used in the operations console and field records.",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "site_notes": {
+      "type": "string",
+      "description": "Optional short notes about the installation site.",
+      "maxLength": 500
+    },
+    "deployment_tier": {
+      "type": "string",
+      "description": "Build maturity or deployment tier for the node.",
+      "enum": [
+        "tier1_bench",
+        "tier2_field_pilot",
+        "tier3_hardened_community",
+        "tier4_district_reference"
+      ]
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Time the status record was generated."
+    },
+    "last_seen_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Most recent time the node was observed or successfully heard from."
+    },
+    "last_log_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time",
+      "description": "Most recent time the node wrote a local log event, if known."
+    },
+    "firmware_version": {
+      "type": "string",
+      "description": "Version string for the node firmware.",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "hardware_revision": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Optional hardware revision label.",
+      "maxLength": 64
+    },
+    "config_profile": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Optional named configuration profile active on the node.",
+      "maxLength": 64
+    },
+    "current_state": {
+      "type": "string",
+      "description": "Primary node state.",
+      "enum": [
+        "BOOT",
+        "NORMAL",
+        "WATCH",
+        "ALERT",
+        "DEGRADED",
+        "FAULT",
+        "MAINTENANCE",
+        "OFFLINE_LOGGING",
+        "SHUTDOWN_SAFE"
+      ]
+    },
+    "state_reason": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Optional short explanation for the current state.",
+      "maxLength": 256
+    },
+    "water_status": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Short qualitative label for present water condition.",
+      "enum": [
+        null,
+        "unknown",
+        "dry",
+        "normal",
+        "rising",
+        "persistent",
+        "receding",
+        "high",
+        "blocked_suspected",
+        "backflow_suspected"
+      ]
+    },
+    "water_level": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Current measured water level if available, in deployment-defined units."
+    },
+    "water_level_units": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Units for water_level.",
+      "enum": [
+        null,
+        "mm",
+        "cm",
+        "m",
+        "in",
+        "ft",
+        "raw"
+      ]
+    },
+    "water_trend": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Short trend classification for water behavior.",
+      "enum": [
+        null,
+        "unknown",
+        "stable",
+        "rising",
+        "falling",
+        "volatile"
+      ]
+    },
+    "watch_threshold_active": {
+      "type": "boolean",
+      "description": "Whether the watch threshold is currently active."
+    },
+    "alert_threshold_active": {
+      "type": "boolean",
+      "description": "Whether the alert threshold is currently active."
+    },
+    "secondary_threshold_active": {
+      "type": "boolean",
+      "description": "Whether a secondary sensor or confirmation threshold is currently active."
+    },
+    "blockage_score": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Optional blockage suspicion score on a 0.0 to 1.0 scale.",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "backflow_flag": {
+      "type": "boolean",
+      "description": "Whether the node currently suspects or observes backflow-related conditions."
+    },
+    "debris_score": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Optional debris loading or obstruction score on a 0.0 to 1.0 scale.",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "sensor_health": {
+      "type": "string",
+      "description": "Overall health of the node's primary sensing path.",
+      "enum": [
+        "trusted",
+        "cautionary",
+        "degraded",
+        "suspect",
+        "unavailable"
+      ]
+    },
+    "sensor_summary": {
+      "type": "object",
+      "description": "Optional structured view of individual sensor-channel status.",
+      "additionalProperties": false,
+      "properties": {
+        "primary_level_sensor": {
+          "$ref": "#/$defs/channelHealth"
+        },
+        "secondary_threshold_sensor": {
+          "$ref": "#/$defs/channelHealth"
+        },
+        "humidity_sensor": {
+          "$ref": "#/$defs/channelHealth"
+        },
+        "power_monitor": {
+          "$ref": "#/$defs/channelHealth"
+        },
+        "camera_module": {
+          "$ref": "#/$defs/channelHealth"
+        }
+      }
+    },
+    "power_state": {
+      "type": "string",
+      "description": "Current power condition.",
+      "enum": [
+        "unknown",
+        "external_power",
+        "battery_normal",
+        "battery_low",
+        "charging",
+        "power_unstable",
+        "brownout_recovered",
+        "critical_low_power"
+      ]
+    },
+    "battery_voltage": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Battery voltage reading if available."
+    },
+    "battery_percent_estimate": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Estimated remaining battery percentage on a 0 to 100 scale.",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "solar_input_present": {
+      "type": "boolean",
+      "description": "Whether solar input is presently detected."
+    },
+    "communication_state": {
+      "type": "string",
+      "description": "Current communications condition.",
+      "enum": [
+        "unknown",
+        "online",
+        "intermittent",
+        "stale",
+        "offline_logging",
+        "offline"
+      ]
+    },
+    "last_uplink_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time",
+      "description": "Most recent successful uplink time if known."
+    },
+    "signal_quality": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "description": "Optional normalized signal quality estimate on a 0.0 to 1.0 scale.",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "local_alert_active": {
+      "type": "boolean",
+      "description": "Whether a local visible or audible alert is currently active."
+    },
+    "maintenance_needed": {
+      "type": "boolean",
+      "description": "Whether the node currently requests inspection, cleaning, or maintenance."
+    },
+    "maintenance_reason": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Optional short explanation for maintenance-needed status.",
+      "maxLength": 256
+    },
+    "last_service_date": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date",
+      "description": "Last known service date if available."
+    },
+    "fault_present": {
+      "type": "boolean",
+      "description": "Whether a fault is currently active."
+    },
+    "fault_code": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Optional normalized fault code.",
+      "maxLength": 64
+    },
+    "fault_summary": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Optional short summary of active fault behavior.",
+      "maxLength": 256
+    },
+    "health_confidence": {
+      "type": "string",
+      "description": "Overall confidence level for the usefulness of this status record.",
+      "enum": [
+        "trusted",
+        "cautionary",
+        "degraded",
+        "suspect",
+        "unavailable"
+      ]
+    },
+    "offline_logging_supported": {
+      "type": "boolean",
+      "description": "Whether the node supports local event logging when uplink is lost."
+    },
+    "offline_logging_active": {
+      "type": "boolean",
+      "description": "Whether the node is believed to be actively logging while disconnected."
+    },
+    "location": {
+      "type": "object",
+      "description": "Optional deployment location metadata.",
+      "additionalProperties": false,
+      "properties": {
+        "latitude": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": -90,
+          "maximum": 90
+        },
+        "longitude": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": -180,
+          "maximum": 180
+        },
+        "elevation_m": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "location_note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "description": "Optional short tags useful for filtering or grouping.",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32
+      },
+      "maxItems": 20,
+      "uniqueItems": true
+    },
+    "raw_observation_notes": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Optional short free-text notes produced by a builder, field operator, or gateway process.",
+      "maxLength": 1000
+    }
+  },
+  "$defs": {
+    "channelHealth": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "trusted",
+            "cautionary",
+            "degraded",
+            "suspect",
+            "unavailable"
+          ]
+        },
+        "last_good_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 256
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "current_state": {
+            "const": "ALERT"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "alert_threshold_active": {
+            "const": true
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "communication_state": {
+            "const": "offline_logging"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "offline_logging_active": {
+            "const": true
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "fault_present": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "fault_code"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "maintenance_needed": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "maintenance_reason"
+        ]
+      }
+    }
+  ]
+}
